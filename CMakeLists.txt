@@ -14,6 +14,7 @@ set(CMAKE_AUTOUIC ON)
 add_executable(ansogic-rpa-engine
     src/main.cpp
     src/DesktopAutomationEngine.h
+    src/MainWindow.h
     src/MainWindow.cpp
 )
 

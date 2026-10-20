@@ -1,48 +1,49 @@
+#include "MainWindow.h"
 #include "DesktopAutomationEngine.h"
+#include <QThread>
+#include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
-{
-    ui->setupUi(this);
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    // 1. Configurar la ventana principal de AnSoGicLabs
+    this->setWindowTitle("AnSoGicLabs // RPA Control Panel");
+    this->resize(400, 150);
 
-    // Inicializar el hilo de ejecución para proteger la concurrencia
+    // 2. Crear los componentes gráficos por código nativo
+    QWidget *centralWidget = new QWidget(this);
+    QVBoxLayout *layout = new QVBoxLayout(centralWidget);
+
+    txtDataEntry = new QLineEdit("Texto automatizado desde AnSoGicLabs", this);
+    btnStartAutomation = new QPushButton("Iniciar Inyección de Datos", this);
+
+    layout->addWidget(txtDataEntry);
+    layout->addWidget(btnStartAutomation);
+    centralWidget->setLayout(layout);
+    setCentralWidget(centralWidget);
+
+    // 3. Configurar el entorno multihilo para el Motor de Automatización
     QThread *automationThread = new QThread(this);
     AutomationWorker *worker = new AutomationWorker();
     worker->moveToThread(automationThread);
 
-    // Conexiones de Señales y Slots para la ejecución asíncrona
-    connect(ui->btnStartAutomation, &QPushButton::clicked, this, [=]() {
-        QString data = ui->txtDataEntry->text();
-        int targetX = ui->spinX->value();
-        int targetY = ui->spinY->value();
+    // Conectar el botón al proceso del bot en segundo plano de manera segura
+    connect(btnStartAutomation, &QPushButton::clicked, this, [=]() {
+        QString texto = txtDataEntry->text();
+        btnStartAutomation->setEnabled(false); // Bloquear botón para evitar doble envío
         
-        // Disparar tarea en segundo plano de forma segura
+        // Ejecutar la tarea en el hilo del bot (coordenadas de ejemplo X:500, Y:400)
         QMetaObject::invokeMethod(worker, "executeDataEntry", Qt::QueuedConnection,
-                                  Q_ARG(QString, data), Q_ARG(int, targetX), Q_ARG(int, targetY));
+                                  Q_ARG(QString, texto), Q_ARG(int, 500), Q_ARG(int, 400));
     });
 
-    connect(ui->btnInspectROI, &QPushButton::clicked, this, [=]() {
-        QRect targetROI(100, 100, 400, 200); // Región fija de ejemplo de un sistema ERP
-        QMetaObject::invokeMethod(worker, "inspectScreenRegion", Qt::QueuedConnection,
-                                  Q_ARG(QRect, targetROI));
+    // Reactivar el botón cuando el bot termine su ciclo
+    connect(worker, &AutomationWorker::taskFinished, this, [=](bool success) {
+        btnStartAutomation->setEnabled(true);
+        QMessageBox::information(this, "RPA Status", "Secuencia de automatización nativa completada.");
     });
 
-    // Respuestas del hilo de trabajo a la interfaz de usuario
-    connect(worker, &AutomationWorker::taskFinished, this, [](bool success) {
-        qDebug() << "Flujo de automatización completado con estatus:" << success;
-    });
-
-    connect(worker, &AutomationWorker::screenProcessed, this, [=](const QPixmap &pix) {
-        if(!pix.isNull()) {
-            ui->lblPreviewROI->setPixmap(pix.scaled(ui->lblPreviewROI->size(), Qt::KeepAspectRatio));
-        }
-    });
-
-    // Limpieza de memoria al destruir el objeto
+    // Gestión del ciclo de vida de la memoria
     connect(automationThread, &QThread::finished, worker, &QObject::deleteLater);
     automationThread->start();
 }
 
-MainWindow::~MainWindow() {
-    delete ui;
-}
+MainWindow::~MainWindow() {}
