@@ -1,8 +1,8 @@
 # AnSoGicLabs // Native Desktop RPA Engine
 ### High-Performance Automation Framework for Legacy and Enterprise Systems
-<img src="https://shields.io_|_Linux-blue" alt="Platform" />
-<img src="https://shields.io" alt="Language" />
-<img src="https://shields.io" alt="License" />
+<img src="https://shields.io" />
+<img src="https://shields.io" />
+<img src="https://shields.io" />
 
 ---
 
