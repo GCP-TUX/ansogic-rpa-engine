@@ -10,7 +10,7 @@
 ## 📋 Executive Summary
 Modern enterprise workflows often rely on **legacy systems, desktop applications (Win32, Qt, Delphi, FoxPro), and terminal emulators** that completely lack modern APIs or web interfaces. This architectural limitation forces businesses to dedicate valuable human capital to repetitive data entry, introducing high error rates and severe operational bottlenecks.
 
-This project is a production-ready **Proof of Concept (PoC) of a Lightweight, Non-Invasive Robotic Process Automation (RPA) Engine** written natively in **C++ and Qt**. By operating directly at the OS subsystem level, this architecture bypasses the need for dedicated APIs, allowing headless data orchestration, coordinate-targeted UI interactions, and screen-scraping pipelines with an ultra-low memory footprint (< 30MB RAM).
+This project is a production-ready **Proof of Concept (PoC) of a Lightweight, Non-Invasive Robotic Process Automation (RPA) Engine** written natively in **C++ and Qt** under the **AnSoGicLabs** suite. By operating directly at the OS subsystem level, this architecture bypasses the need for dedicated APIs, allowing graphical user interface orchestration, coordinate-targeted UI interactions, and screen-scraping pipelines with an ultra-low memory footprint (< 30MB RAM).
 
 ---
 
@@ -19,7 +19,7 @@ This project is a production-ready **Proof of Concept (PoC) of a Lightweight, No
 * **Asynchronous Multi-Threaded Pipeline:** Separates the core automation loops and hardware injection layer (`AutomationWorker`) from the Main UI Thread via `QThread`, preventing UI freezing and ensuring deterministic execution during complex data entry cycles.
 * **Low-Level Native Input Injection:** Utilizes platform-specific sub-systems (such as the Win32 `SendInput` API for Windows and low-level event emulators for Linux) to bypass standard software abstractions and type text natively into protected industrial applications.
 * **Targeted Computer Vision / Screen Scraping:** Instead of capturing massive full-screen buffers, the engine clips specific Regions of Interest (ROI) dynamically via `QScreen::grabWindow`, significantly lowering CPU and memory usage before sending frame buffers to OCR engines or OpenCV pipelines.
-* **Cross-Platform Extensibility:** Built on top of a modular design capable of scaling from local Windows environments to highly secured Linux infrastructures (including modern Wayland environments utilizing custom portals/PipeWire interfaces).
+* **Cross-Platform Extensibility:** Built on top of a modular design capable of scaling from local Windows environments to highly secured Linux infrastructures (including modern Wayland environments utilizing custom portals/PipeWire interfaces built into our AnSoGic product family).
 
 ---
 
@@ -61,6 +61,17 @@ emit screenProcessed(criticalZone);
 
 ---
 
+## 🎮 How to Run and Use the RPA Control Panel
+
+When compiled, the engine launches an **AnSoGicLabs Control Panel** built entirely via native Qt layouts (no heavy `.ui` XML dependencies). 
+
+1. **Input Fields:** Type the target text string you wish to inject into your destination application inside the provided text area.
+2. **Execution:** Click the **"Iniciar Inyección de Datos"** button. 
+3. **Multi-Threaded Safety:** The main control panel interface stays completely interactive and operational (it will not hang or freeze) while the `QThread` pipeline handles hardware event injection at background level.
+4. **Status Verification:** The UI automatically displays a system alert box dialog once the automation routine completes successfully.
+
+---
+
 ## 🏢 Enterprise Business Use Cases
 
 1. **Legacy ERP Data Synchronization:** Bridges the gap between modern cloud-based E-commerce APIs and older, on-premise local inventory management software by replicating data entry workflows overnight.
@@ -74,7 +85,7 @@ emit screenProcessed(criticalZone);
 ### Requirements
 * **C++ Compiler:** MSVC 2019+ (Windows) / GCC 9+ (Linux)
 * **Framework:** Qt 5.15.x / Qt 6.x (Core, Gui, Widgets modules)
-* **Build System:** CMake 3.16+ or QMake
+* **Build System:** CMake 3.16+
 
 ### Compilation (CMake)
 ```bash
@@ -90,4 +101,3 @@ cmake --build . --config Release
 A senior systems and application developer with over **23 years of experience** building high-performance architectures, low-level operating system wrappers, and cross-platform native software using **C, C++, Assembly, Java, and Qt**. Specialist in reverse engineering desktop interfaces, memory optimization, and enterprise-grade robotic workflow automation.
 
 For corporate inquiries, system integration consulting, or legacy automation projects, feel free to open an issue or connect directly through this profile.
-
